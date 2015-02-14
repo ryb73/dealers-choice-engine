@@ -23,5 +23,9 @@
   "bugs": {
     "url": "https://github.com/ryb73/dealers-choice-engine/issues"
   },
-  "homepage": "https://github.com/ryb73/dealers-choice-engine"
+  "homepage": "https://github.com/ryb73/dealers-choice-engine",
+  "dependencies": {
+    "comb": "^0.4.0",
+    "node-uuid": "^1.4.2"
+  }
 }
