@@ -30,5 +30,10 @@
     "node-uuid": "^1.4.2",
     "q": "^1.1.2",
     "radysh": "^1.0.0"
+  },
+  "devDependencies": {
+    "chai": "^2.1.0",
+    "chai-as-promised": "^4.2.0",
+    "mocha": "^2.1.0"
   }
 }

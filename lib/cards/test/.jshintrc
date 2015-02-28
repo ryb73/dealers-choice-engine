@@ -1,0 +1,6 @@
+{
+  "globalstrict": true,
+  "predef": [ "require", "module", "process", "__dirname", "__filename", "describe", "it" ],
+  "esnext": true,
+  "nocomma": false
+}
