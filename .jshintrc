@@ -1,6 +1,7 @@
 {
   "globalstrict": true,
-  "predef": [ "require", "module", "process", "__dirname", "__filename" ],
+  "node": true,
+  "predef": [ "-console" ],
   "esnext": true,
   "nocomma": false
 }
