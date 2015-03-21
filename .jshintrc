@@ -1,7 +1,13 @@
 {
   "globalstrict": true,
+  "es5": true,
   "node": true,
   "predef": [ "-console" ],
-  "esnext": true,
-  "nocomma": false
+
+  "nocomma": false,
+  "unused": true,
+  "bitwise": true,
+  "eqeqeq": true,
+  "latedef": "nofunc",
+  "maxcomplexity": 5
 }
