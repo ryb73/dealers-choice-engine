@@ -4,7 +4,8 @@
   "description": "Game engine for Dealer's Choice.",
   "main": "index.js",
   "scripts": {
-    "test": "istanbul cover _mocha test"
+    "test": "mocha --harmony --recursive",
+    "cover": "node --harmony ./node_modules/istanbul-harmony/lib/cli.js cover --hook-run-in-context ./node_modules/mocha/bin/_mocha -- --recursive"
   },
   "repository": {
     "type": "git",
@@ -34,6 +35,7 @@
   "devDependencies": {
     "chai": "^2.1.0",
     "chai-as-promised": "^4.2.0",
+    "istanbul-harmony": "^0.3.16",
     "mocha": "^2.1.0"
   }
 }
