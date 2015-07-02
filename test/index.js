@@ -3,14 +3,12 @@
 
 const chai           = require("chai"),
       chaiAsPromised = require("chai-as-promised"),
-      q              = require("q"),
       _              = require("lodash"),
+      mockDeckConfig = require("./mock-deck-config"),
       dcEngine       = require(".."),
       Player         = dcEngine.Player,
-      GameData       = dcEngine.GameData,
       Insurance      = dcEngine.Insurance,
       Car            = dcEngine.Car,
-      BlueBook       = dcEngine.BlueBook,
       DcCard         = dcEngine.DcCard,
       GameFactory    = dcEngine.GameFactory,
       Game           = require("../lib/game");
@@ -94,7 +92,7 @@ describe("GameFactory", function() {
   let factory;
 
   beforeEach(function() {
-    factory = new GameFactory({});
+    factory = new GameFactory(mockDeckConfig(0, 0, 0));
   });
 
   afterEach(function() {
