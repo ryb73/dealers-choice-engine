@@ -1,5 +1,8 @@
 "use strict";
 
+const dcEngine = require(".."),
+      Car      = dcEngine.Car;
+
 function mockDeckConfig(dcCards, insurances, cars) {
   let deckConfig = {
     dcDeck: [{
@@ -15,8 +18,8 @@ function mockDeckConfig(dcCards, insurances, cars) {
     }],
 
     carDeck: [{
-      constructor: function() {},
-      args: [],
+      constructor: Car,
+      args: [ 0, 1000 ],
       count: cars
     }]
   };

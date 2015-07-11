@@ -1,18 +1,22 @@
 "use strict";
 /* jshint mocha: true */
 
-const chai                 = require("chai"),
-      chaiAsPromised       = require("chai-as-promised"),
-      q                    = require("q"),
-      _                    = require("lodash"),
-      mockDeckConfig       = require("../mock-deck-config"),
-      dcEngine             = require("../.."),
-      Player               = dcEngine.Player,
-      Car                  = dcEngine.Car,
-      GameData             = require("../../lib/game-data"),
-      BeginningState       = require("../../lib/game-states/beginning-state"),
-      CheckReplenish       = require("../../lib/game-states/check-replenish"),
-      PlayerTurnBeginState = require("../../lib/game-states/player-turn-begin-state");
+const chai                      = require("chai"),
+      chaiAsPromised            = require("chai-as-promised"),
+      q                         = require("q"),
+      _                         = require("lodash"),
+      mockDeckConfig            = require("../mock-deck-config"),
+      dcEngine                  = require("../.."),
+      Player                    = dcEngine.Player,
+      Car                       = dcEngine.Car,
+      GameData                  = require("../../lib/game-data"),
+      BeginningState            = require("../../lib/game-states/beginning-state"),
+      CheckReplenish            = require("../../lib/game-states/check-replenish"),
+      PlayerTurnBeginState      = require("../../lib/game-states/player-turn-begin-state"),
+      AllowOpenLot              = require("../../lib/game-states/allow-open-lot"),
+      AllowSecondDcCard         = require("../../lib/game-states/allow-second-dc-card"),
+      BuyFromAutoExchangeOption = require("../../lib/buy-from-auto-exchange-option"),
+      TurnChoice                = require("../../lib/turn-choice");
 
 chai.use(chaiAsPromised);
 const assert = chai.assert;
@@ -71,6 +75,118 @@ describe("CheckReplenish", function() {
 
       });
     });
+
+    it("replenishes if necessary", function() {
+      let players = initPlayers(3);
+      let deckConfig = mockDeckConfig(0, 0, 2);
+      let gameData = new GameData(players, deckConfig);
+
+      let choiceProvider = {
+        chooseBuyFromAutoExchangeOption: function(player) {
+          assert.equal(player, players[0]);
+          return q(BuyFromAutoExchangeOption.FourThou);
+        }
+      };
+
+      let state = new CheckReplenish(gameData, choiceProvider,
+                                      players[0]);
+      return state.go().then(function(newState) {
+        assert.instanceOf(newState, CheckReplenish);
+        assert.equal(players[0].cars.length, 1);
+        assert.equal(players[0].money, 6000);
+      });
+    });
+  });
+});
+
+describe("PlayerTurnBeginState", function() {
+  describe("go", function() {
+    it("requests a turn choice with the proper arguments", function(done) {
+      let players = initPlayers(3);
+      let deckConfig = mockDeckConfig(0, 0, 0);
+      let gameData = new GameData(players, deckConfig);
+
+      let choiceProvider = {
+        getTurnChoice: function(gd, p) {
+          assert.equal(gd, gameData);
+          assert.equal(p, players[0]);
+          done();
+          return q({
+            choice: TurnChoice.DoNothing
+          });
+        }
+      };
+
+      let state = new PlayerTurnBeginState(gameData,
+                   choiceProvider, players[0]);
+      state.go()
+        .catch(done);
+    });
+
+    it("plays a dealer's choice card", function() {
+      let players = initPlayers(3);
+      let deckConfig = mockDeckConfig(0, 0, 0);
+      let gameData = new GameData(players, deckConfig);
+      let choiceProvider;
+
+      let deferrals = makeDeferrals(2);
+
+      let card = {
+        play: function(p, gd, cp) {
+          assert.equal(p, players[0]);
+          assert.equal(gd, gameData);
+          assert.equal(cp, choiceProvider);
+          deferrals[0].resolve();
+          return q(1);
+        }
+      };
+
+      choiceProvider = {
+        getTurnChoice: function(gd, p) {
+          return q({
+            choice: TurnChoice.DcCard,
+            card: card
+          });
+        }
+      };
+
+      let state = new PlayerTurnBeginState(gameData,
+                   choiceProvider, players[0]);
+      state.go()
+        .then(function(newState) {
+          assert.instanceOf(newState, AllowSecondDcCard);
+          deferrals[1].resolve();
+        })
+        .catch(deferrals[1].reject);
+
+      return q.all(deferrals.map(function(deferred) {
+        return deferred.promise;
+      }));
+    });
+
+    it("buys a car from the auto exchange", function() {
+      let players = initPlayers(3);
+      let deckConfig = mockDeckConfig(0, 0, 1);
+      let gameData = new GameData(players, deckConfig);
+
+      let choiceProvider = {
+        getTurnChoice: function(gd, p) {
+          return q({
+            choice: TurnChoice.BuyCar
+          });
+        },
+        chooseBuyFromAutoExchangeOption:
+          q.bind(null, BuyFromAutoExchangeOption.FourThou)
+      };
+
+      let state = new PlayerTurnBeginState(gameData,
+                   choiceProvider, players[0]);
+      return state.go().then(function(newState) {
+        assert.equal(players[0].cars.length, 1);
+        assert.equal(players[0].money, 6000);
+        assert.instanceOf(newState, AllowOpenLot);
+      });
+    });
   });
 });
 
@@ -80,4 +196,12 @@ function initPlayers(num) {
     players.push(new Player(10000));
   });
   return players;
+}
+
+function makeDeferrals(n) {
+  let result = new Array(n);
+  for(let i = 0; i < n; ++i) {
+    result[i] = q.defer();
+  }
+  return result;
 }
