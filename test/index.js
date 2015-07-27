@@ -5,10 +5,10 @@ const chai           = require("chai"),
       chaiAsPromised = require("chai-as-promised"),
       dcEngine       = require(".."),
       Player         = dcEngine.Player,
-      cardTypes      = require("dc-card-interfaces"),
-      Insurance      = cardTypes.Insurance,
-      Car            = cardTypes.Car,
-      DcCard         = cardTypes.DcCard;
+      Insurance      = dcEngine.Insurance,
+      Car            = dcEngine.Car,
+      DcCard         = dcEngine.DcCard,
+      BlankCard      = require("./blank-card");
 
 chai.use(chaiAsPromised);
 const assert = chai.assert;
@@ -82,5 +82,15 @@ describe("Player", function() {
       me.debit(25);
       assert.equal(me.money, 75);
     });
+  });
+});
+
+describe("DcCard", function() {
+  it("removes itself from the player's hand when played", function() {
+    let card = new BlankCard();
+    let player = new Player(10000);
+    player.gainDcCard(card);
+    card.play({}, {}, player);
+    assert.equal(player.dcCards.size, 0);
   });
 });
