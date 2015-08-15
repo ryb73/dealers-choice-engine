@@ -14,38 +14,45 @@ chai.use(chaiAsPromised);
 const assert = chai.assert;
 
 describe("Player", function() {
-  describe("gain", function() {
-    it("can take a car", function() {
-      let me = new Player(0);
+  describe("buy", function() {
+    it("can buy a car", function() {
+      let me = new Player(100);
       let car = new Car(1, 1);
-      me.gainCar(car);
+      me.buyCar(car, 100);
       assert.ok(me.hasCar(car));
+      assert.equal(me.money, 0);
     });
 
+    it("can buy an insurance", function() {
+      let me = new Player(100);
+      let insurance = new Insurance();
+      me.buyInsurance(insurance, 100);
+      assert.ok(me.hasInsurance(insurance));
+      assert.equal(me.money, 0)
+    });
+  });
+
+  describe("gain", function() {
     it("can take a card", function() {
       let me = new Player(0);
       let card = new DcCard();
       me.gainDcCard(card);
       assert.ok(me.hasDcCard(card));
     });
+  });
 
-    it("can take an insurance", function() {
+  describe("sell", function() {
+    it("works with cars", function() {
       let me = new Player(0);
-      let insurance = new Insurance();
-      me.gainInsurance(insurance);
-      assert.ok(me.hasInsurance(insurance));
+      let car = new Car(1, 1);
+      me.buyCar(car, 0);
+      me.sellCar(car, 100);
+      assert.notOk(me.hasCar(car));
+      assert.equal(me.money, 100);
     });
   });
 
   describe("lose", function() {
-    it("works with cars", function() {
-      let me = new Player(0);
-      let car = new Car(1, 1);
-      me.gainCar(car);
-      me.loseCar(car);
-      assert.notOk(me.hasCar(car));
-    });
-
     it("works with dc cards", function() {
       let me = new Player(0);
       let card = new DcCard();
@@ -57,7 +64,7 @@ describe("Player", function() {
     it("works with insurance", function() {
       let me = new Player(0);
       let insurance = new Insurance();
-      me.gainInsurance(insurance);
+      me.buyInsurance(insurance, 0);
       me.loseInsurance(insurance);
       assert.notOk(me.hasInsurance(insurance));
     });
