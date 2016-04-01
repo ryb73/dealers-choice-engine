@@ -29,13 +29,13 @@
     "bind-array": "^1.0.0",
     "chai": "3.5.0",
     "give-unique-id": "^1.0.0",
-    "lodash": "4.1.0",
+    "lodash": "4.7.0",
     "node-uuid": "^1.4.3",
     "q": "^1.4.1"
   },
   "devDependencies": {
     "chai": "^2.3.0",
-    "chai-as-promised": "5.2.0",
+    "chai-as-promised": "5.3.0",
     "istanbul-harmony": "^0.3.16",
     "mocha": "^2.2.5"
   }
