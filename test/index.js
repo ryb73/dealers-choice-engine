@@ -98,6 +98,6 @@ describe("DcCard", function() {
     let player = new Player(10000);
     player.gainDcCard(card);
     card.play({}, {}, player);
-    assert.equal(player.dcCards.size, 0);
+    assert.equal(player.dcCards.length, 0);
   });
 });
