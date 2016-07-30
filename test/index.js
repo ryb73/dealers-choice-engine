@@ -3,6 +3,7 @@
 
 const chai           = require("chai"),
       chaiAsPromised = require("chai-as-promised"),
+      _              = require("lodash"),
       dcEngine       = require(".."),
       Player         = dcEngine.Player,
       Insurance      = dcEngine.Insurance,
@@ -98,6 +99,6 @@ describe("DcCard", function() {
     let player = new Player(10000);
     player.gainDcCard(card);
     card.play({}, {}, player);
-    assert.equal(player.dcCards.length, 0);
+    assert.equal(_.size(player.dcCards), 0);
   });
 });
