@@ -29,7 +29,7 @@ describe("Player", function() {
       let insurance = new Insurance();
       me.buyInsurance(insurance, 100);
       assert.ok(me.hasInsurance(insurance));
-      assert.equal(me.money, 0)
+      assert.equal(me.money, 0);
     });
   });
 
@@ -47,7 +47,7 @@ describe("Player", function() {
       let me = new Player(0);
       let car = new Car(1, 1);
       me.buyCar(car, 0);
-      me.sellCar(car, 100);
+      me.sellCarToBank(car, 100);
       assert.notOk(me.hasCar(car));
       assert.equal(me.money, 100);
     });
