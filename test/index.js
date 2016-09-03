@@ -8,7 +8,6 @@ const chai           = require("chai"),
       Player         = dcEngine.Player,
       Insurance      = dcEngine.Insurance,
       Car            = dcEngine.Car,
-      DcCard         = dcEngine.DcCard,
       BlankCard      = require("./blank-card");
 
 chai.use(chaiAsPromised);
@@ -36,7 +35,7 @@ describe("Player", function() {
   describe("gain", function() {
     it("can take a card", function() {
       let me = new Player(0);
-      let card = new DcCard();
+      let card = new BlankCard();
       me.gainDcCard(card);
       assert.ok(me.hasDcCard(card));
     });
@@ -56,7 +55,7 @@ describe("Player", function() {
   describe("lose", function() {
     it("works with dc cards", function() {
       let me = new Player(0);
-      let card = new DcCard();
+      let card = new BlankCard();
       me.gainDcCard(card);
       me.loseDcCard(card);
       assert.notOk(me.hasDcCard(card));
@@ -90,15 +89,5 @@ describe("Player", function() {
       me.debit(25);
       assert.equal(me.money, 75);
     });
-  });
-});
-
-describe("DcCard", function() {
-  it("removes itself from the player's hand when played", function() {
-    let card = new BlankCard();
-    let player = new Player(10000);
-    player.gainDcCard(card);
-    card.play({}, {}, player);
-    assert.equal(_.size(player.dcCards), 0);
   });
 });
